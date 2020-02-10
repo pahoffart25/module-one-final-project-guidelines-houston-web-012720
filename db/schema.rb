@@ -19,13 +19,14 @@ ActiveRecord::Schema.define(version: 2020_02_10_153645) do
 
   create_table "recipes", force: :cascade do |t|
     t.string "title"
-    t.string "description"
-    t.integer "calories"
+    t.text "description"
+    t.integer "calorie"
     t.integer "time"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
+    t.string "user_name"
+    t.string "password"
   end
 
 end
