@@ -47,11 +47,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord (~> 5.2)
+  activerecord (~> 5.2.1)
   pry
   require_all
   sinatra-activerecord
-  sqlite3 (~> 1.4)
+  sqlite3
 
 BUNDLED WITH
    2.1.4
