@@ -7,4 +7,8 @@ gem "sqlite3"
 gem 'tty-prompt'
 gem "pry"
 gem "require_all"
+# gem "rest-client"
+gem "artii"
+gem 'json'
+gem 'colorize'
 

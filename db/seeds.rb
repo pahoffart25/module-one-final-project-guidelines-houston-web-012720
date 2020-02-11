@@ -1,6 +1,11 @@
+require 'rest-client'
+
 Recipe.destroy_all
 User.destroy_all
 Kitchen.destroy_all
+Meal.destroy_all
+Ingredient.destroy_all
+
 
 
 
@@ -26,4 +31,17 @@ Kitchen.create(user_id: user2.id , recipe_id: r4.id )
 Kitchen.create(user_id: user1.id , recipe_id: r2.id )
 Kitchen.create(user_id: user3.id , recipe_id: r3.id )
 
+
+ingredient1 = Ingredient.create(name: "egg", description: "some eggin")
+ingredient2 = Ingredient.create(name: "tomato", description: "some tomato")
+ingredient3 = Ingredient.create(name: "garlic", description: "some garlic")
+
+meal1 = Meal.create(recipe_id: r1.id , ingredient_id: ingredient1.id , amount: 3)
+meal2 = Meal.create(recipe_id: r1.id , ingredient_id: ingredient2.id , amount: 4)
+meal3 = Meal.create(recipe_id: r1.id , ingredient_id: ingredient3.id , amount: 1)
+
+# response = RestClient.get("https://api.edamam.com/search?q=chicken&app_id=9b96036e&app_key=2d7544a3eceb9fe3a7edb933d5178f4a&from=0&to=3&calories=591-722&health=alcohol-free")
+# kitchens = JSON.parse(response)
+# binding.pry 
+0
 
