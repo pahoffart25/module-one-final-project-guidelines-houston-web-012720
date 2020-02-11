@@ -5,4 +5,5 @@ ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/develo
 require_all 'app'
 
 ActiveRecord::Base.logger = Logger.new(STDOUT)
-stop 
+
+
