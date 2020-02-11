@@ -1,21 +1,39 @@
 require_relative '../config/environment'
-require pry
+require 'pry'
 require "tty-prompt"
 
 $prompt = TTY::Prompt.new
 
-# def greeting
-#      $prompt.select("Welcome, are you a current user or new user?", %w(Current, New))
-# end
-# p greeting
 
-
-def get_info
-    # users ={}
-    $prompt.ask("Enter your user name")
-    name = gets.chomp
-    users = User.find_by(user_name: name) 
-    users.each{|user| p user.user_name}
-    binding.pry
+#method to create a new user
+def create_user
+    name = $prompt.ask ("What would you like your user name to be?") 
+    password = $prompt.mask("What would you like your password to be?") 
+    User.create(user_name: name, password: password)
 end
-p get_info
+# p create_user
+
+#method to check if user exist
+def check_info
+    name = $prompt.ask("Enter your user name")
+    if User.exists?(user_name: name)
+    password = $prompt.mask("Enter password")
+    "Welcome back #{name}"
+    else
+        sleep(1)
+        puts "Sorry that user name does not exist"
+        sleep(1)
+        create_user
+    end
+end
+# p check_info
+
+def greeting
+    selection = $prompt.ask("Welcome, are you a current user? Yes/No")
+      if selection == "Yes"
+          check_info
+      else 
+          create_user
+      end
+  end
+  p greeting
