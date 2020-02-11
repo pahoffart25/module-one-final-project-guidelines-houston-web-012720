@@ -1,4 +1,4 @@
-class RecipeBook < ActiveRecord::Base
+class Kitchen < ActiveRecord::Base
     belongs_to :user
     belongs_to :recipe
 end
