@@ -10,7 +10,12 @@ class CLI < TTY::Prompt
 
 
    def greet
-      say('Welcome to the kitchen!') # method of prompt
+
+      a = Artii::Base.new
+      welcome =  a.asciify ('Welcome to the kitchen!')
+      puts welcome.colorize(:red)
+      # method of prompt
+
    end
 
    def ask_username
@@ -52,7 +57,11 @@ class CLI < TTY::Prompt
       if !@user
          login_or_register  # login if not done yet
       end
+
+
+
 if @user
+
       # select is a method of prompt here
       select('Menu - I want to') do |menu|     # syntax for select of prompt (checkout docs), dispatches chosen actions
 
@@ -71,7 +80,9 @@ if @user
          menu.choice 'logout', -> { logout }
 
       end
+
     end
+
 
       end
    end
@@ -116,12 +127,14 @@ if @user
    end
 
    def find_recipes_by_ingredients
+
    say('As a user, I want to enter an list of ingredients (select from list on cli) and be given a list of all recipes that can be prepared with the entered ingredients.') 
    # we have no ingedients in the database yet, so either add column or change this method
    ingredients = multi_select("Select ingredients",Ingredient.all)
    #  We would need to select from all recipes, where these recipe's ingredients are contained in the chosen ingredients.
       
    # recipes = ingredients.reci
+
    end
 
 
@@ -151,9 +164,6 @@ end
 
 cli = CLI.new
 cli.menu
-
-
-
 
 
 

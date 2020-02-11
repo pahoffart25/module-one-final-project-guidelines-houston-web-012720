@@ -1,11 +1,10 @@
-require 'rest-client'
+
 
 Recipe.destroy_all
 User.destroy_all
 Kitchen.destroy_all
 Meal.destroy_all
 Ingredient.destroy_all
-
 
 
 
@@ -32,6 +31,7 @@ Kitchen.create(user_id: user1.id , recipe_id: r2.id )
 Kitchen.create(user_id: user3.id , recipe_id: r3.id )
 
 
+
 ingredient1 = Ingredient.create(name: "egg", description: "some eggin")
 ingredient2 = Ingredient.create(name: "tomato", description: "some tomato")
 ingredient3 = Ingredient.create(name: "garlic", description: "some garlic")
@@ -44,4 +44,5 @@ meal3 = Meal.create(recipe_id: r1.id , ingredient_id: ingredient3.id , amount: 1
 # kitchens = JSON.parse(response)
 # binding.pry 
 0
+
 
