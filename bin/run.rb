@@ -1,8 +1,6 @@
 require_relative '../config/environment'
 
-# In Gemfile add:
-#gem "tty-prompt"
-require "tty-prompt"
+
 
 # Here we inherit from Prompt, to get all CLI methods (not strictly necessary though)
 class CLI < TTY::Prompt
@@ -54,7 +52,7 @@ class CLI < TTY::Prompt
       if !@user
          login_or_register  # login if not done yet
       end
-
+if @user
       # select is a method of prompt here
       select('Menu - I want to') do |menu|     # syntax for select of prompt (checkout docs), dispatches chosen actions
 
@@ -73,6 +71,7 @@ class CLI < TTY::Prompt
          menu.choice 'logout', -> { logout }
 
       end
+    end
 
       end
    end
@@ -117,8 +116,12 @@ class CLI < TTY::Prompt
    end
 
    def find_recipes_by_ingredients
-   say('As a user, I want to enter an list of ingredients (select from list on cli) and be given a list of all recipes that can be prepared with the entered ingredients.')
+   say('As a user, I want to enter an list of ingredients (select from list on cli) and be given a list of all recipes that can be prepared with the entered ingredients.') 
    # we have no ingedients in the database yet, so either add column or change this method
+   ingredients = multi_select("Select ingredients",Ingredient.all)
+   #  We would need to select from all recipes, where these recipe's ingredients are contained in the chosen ingredients.
+      
+   # recipes = ingredients.reci
    end
 
 
