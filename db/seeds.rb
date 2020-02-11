@@ -40,9 +40,9 @@ meal1 = Meal.create(recipe_id: r1.id , ingredient_id: ingredient1.id , amount: 3
 meal2 = Meal.create(recipe_id: r1.id , ingredient_id: ingredient2.id , amount: 4)
 meal3 = Meal.create(recipe_id: r1.id , ingredient_id: ingredient3.id , amount: 1)
 
-# response = RestClient.get("https://api.edamam.com/search?q=chicken&app_id=9b96036e&app_key=2d7544a3eceb9fe3a7edb933d5178f4a&from=0&to=3&calories=591-722&health=alcohol-free")
-# kitchens = JSON.parse(response)
-# binding.pry 
+ response = HTTParty.get("https://api.edamam.com/search?q=chicken&app_id=18bc3679&app_key=94a62e328e3e1f0fdcdfe2b7101a9f32&from=0&to=3&calories=591-722&health=alcohol-free")
+puts response
+ binding.pry 
 0
 
 
