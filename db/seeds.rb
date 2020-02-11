@@ -1,4 +1,3 @@
-require "rest-client"
 Recipe.destroy_all
 User.destroy_all
 Kitchen.destroy_all
@@ -28,8 +27,8 @@ Kitchen.create(user_id: user3.id , recipe_id: r3.id )
 
 
 
- response = RestClient.get("https://api.edamam.com/search?q=chicken&app_id=9b96036e&app_key=2d7544a3eceb9fe3a7edb933d5178f4a&from=0&to=3&calories=591-722&health=alcohol-free")
+#  response = RestClient.get("https://api.edamam.com/search?q=chicken&app_id=9b96036e&app_key=2d7544a3eceb9fe3a7edb933d5178f4a&from=0&to=3&calories=591-722&health=alcohol-free")
 
- recipes = JSON.parse(response)
+#  recipes = JSON.parse(response)
 
-binding.pry
+# binding.pry

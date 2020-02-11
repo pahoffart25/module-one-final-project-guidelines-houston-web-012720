@@ -8,6 +8,6 @@ gem "pry"
 gem "tty-prompt"
 gem "require_all"
 gem "artii"
-gem "rest-client"
+# gem "rest-client"
 gem 'json'
 gem "colorize"
