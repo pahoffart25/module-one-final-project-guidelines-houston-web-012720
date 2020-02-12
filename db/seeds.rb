@@ -41,30 +41,50 @@ require 'httparty'
 # meal2 = Meal.create(recipe_id: r1.id , ingredient_id: ingredient2.id , amount: 4)
 # meal3 = Meal.create(recipe_id: r1.id , ingredient_id: ingredient3.id , amount: 1)
 
-response = HTTParty.get("https://api.edamam.com/search?q=beef&app_id=18bc3679&app_key=94a62e328e3e1f0fdcdfe2b7101a9f32&from=0&to=3&calories=591-722&health=alcohol-free")
+
+# extract just a unique name from the ingredient text
+def extract_name(text)
+    text.tr("0-9", "") # remove all digits from string
+end
+
+# extract the amount from the ingredient text (if possible)
+def extract_number(text)
+    text.scan(/\d+/).first   # take the first matching occurrence of digits
+end
+
+# get an ingredient object based on the name (avoids duplicates)
+def get_ingredient(name) 
+    ingredient = Ingredient.find_by(name:  name)  # try to find the ingredient's name
+    if !ingredient                                # create it if it does not exist yet
+    ingredient = Ingredient.create(name: name)
+    end
+    ingredient                                    # return the ingredient object
+end
+
+
+# query the api
+response = HTTParty.get("https://api.edamam.com/search?q=chicken&app_id=18bc3679&app_key=94a62e328e3e1f0fdcdfe2b7101a9f32&from=0&to=3&calories=591-722&health=alcohol-free")
 
 # CLASS RECIPE
-# response["hits"].each do |hit|
-#    p hit["recipe"]["label"]    #get us the title for all the dishes
+   response["hits"].each do |hit| # for each recipe in response
+   # create the new recipe in the database
+   recipe = Recipe.create(title: hit["recipe"]["label"], calorie: hit["recipe"]["calories"], time: hit["recipe"]["totalTime"],description:hit["recipe"]["url"])
+   # for each ingredient of this recipe
+   hit["recipe"]["ingredients"].map do |a| 
+    ingredient = get_ingredient(extract_name(a["text"]))  # get the ingredient object based on the name of the ingredient
+    # create a meal object in the database that links the recipe to the ingredient and set the required weight and amount (if possible)
+    Meal.create(recipe_id: recipe.id , ingredient_id: ingredient.id , weight: a["weight"] , amount: extract_number(a["text"]))
+   end
+   end
 
 
-# response["hits"].each do |hit|  ##get us the calorie for all the dishes
-#     p hit["recipe"]["calories"]
-# end
-
-# response ["hits"].each do |hit|
-#     p hit["recipe"]["totalTime"]  #to get our time
-# end
-
-# response ["hits"].each do |hit|
-#     p hit["recipe"]["url"]  #to get our description
-# end
 
 
 # CLASS INGREDIENT
 
+
 # response["hits"].each do |hit|
-#      hit["recipe"]["ingredients"].map{|a| p a["text"]}.uniq
+#      hit["recipe"]["ingredients"].map{|a| p a["text"]}
 # end
 
 # response["hits"].each do |hit|
@@ -75,7 +95,7 @@ response = HTTParty.get("https://api.edamam.com/search?q=beef&app_id=18bc3679&ap
 
 
 
- binding.pry 
-0
+#  binding.pry 
+
 
 
