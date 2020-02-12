@@ -17,13 +17,11 @@ class CLI < TTY::Prompt
    end
 
 
-   # def ask_username
-   #    ask('What is your name?', default: ENV['USER']) # method of prompt, default is the system user)
-   # end
+   def ask_password
+      mask('What is your password?') # method of prompt that gives us password input
+   end
+   
 
-   # def ask_password
-   #    mask('What is your password?') # method of prompt that gives us password input
-   # end
 
    #1) I want to enter name and password , and my data be saved , have option of login or new_user
    def login_or_register
@@ -60,9 +58,7 @@ class CLI < TTY::Prompt
          login_or_register  # login if not done yet
       end
 
-
-
-if @user
+     if @user
 
       # select is a method of prompt here
       select('Menu - I want to'.colorize(:green)) do |menu|     # syntax for select of prompt (checkout docs), dispatches chosen actions
@@ -83,7 +79,7 @@ if @user
 
       end
 
-    end
+      end
 
 
       end
@@ -154,18 +150,26 @@ if @user
 
    say('Which ingredients do you have?') 
    # print a list of all known ingredients and offer a multiple choice selection
-   ingredients = multi_select("Select ingredients",Ingredient.all.map{|i| i.name})
-   binding.pry
-   ingredients = Ingredient.where(name: ingredients)
-   recipes = ingredients.map{|i| i.recipes}.flatten.uniq
-   list_recipes recipes
 
+   # ingredients = multi_select("Select ingredients",Ingredient.all.map {|i| i.name})
+   ingredients = multi_select("Select ingredients",Ingredient.pluck(:name))
+
+   #  TODO We would need to select from all recipes, where these recipe's ingredients are contained in the chosen ingredients.
+      
+   ingredients = Ingredient.where(name: ingredients)
+   recipes = ingredients.map { |i| i.recipes }.flatten.uniq
+
+
+   list_recipes recipes 
    end
 
 
    # As a user, I want to find recipes by name and retrieve a list of all ingredients needed to prepare that recipe.
    def find_recipe_by_title
+
+
       view_recipe(Recipe.find_by(title: ask('Which recipe would you like to look for? >:')))     # ask for recipe title, search for it and display
+
    end
 
    # As a user, I want to enter a calorie limit and retrieve a list of all recipes that match the given calorie limit.
