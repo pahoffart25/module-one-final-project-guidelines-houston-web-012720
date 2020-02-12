@@ -11,4 +11,5 @@ gem "artii"
 gem "httparty"
 gem 'json'
 gem "colorize"
+gem 'terminal-table'
 

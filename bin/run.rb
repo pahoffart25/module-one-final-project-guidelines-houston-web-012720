@@ -1,7 +1,5 @@
 require_relative '../config/environment'
 
-
-
 # Here we inherit from Prompt, to get all CLI methods (not strictly necessary though)
 class CLI < TTY::Prompt
 
@@ -13,14 +11,11 @@ class CLI < TTY::Prompt
 
       a = Artii::Base.new
       welcome =  a.asciify ('Welcome to the kitchen!')
-      puts welcome.colorize(:red)
+      puts welcome.colorize(:cyan)
       # method of prompt
 
    end
 
-   def ask_username
-      ask('What is your name?', default: ENV['USER']) # method of prompt, default is the system user
-   end
 
    def ask_password
       mask('What is your password?') # method of prompt that gives us password input
@@ -30,16 +25,19 @@ class CLI < TTY::Prompt
 
    #1) I want to enter name and password , and my data be saved , have option of login or new_user
    def login_or_register
-      username = ask_username
-      password = ask_password
+      username = ask('What is your name?', default: ENV['USER'])
+      puts ""
+      password = mask('What is your password?')
+      puts ""
 
       user = User.find_by(user_name: username) # get user from db
       if user
          if user.password == password     #check if password valid and set user logged in
             say('You are now logged in.')
             @user = user
+            sleep(1)
          else
-            say('Access denied! Wrong password.') #THIS RETURNS MESSAGE BUT STILL LOGS IN?
+            say('Access denied! Wrong password.') 
          end
       elsif yes?('You are not yet registered. Do you want to register?')  # method of prompt for yes/no
          @user = User.create(user_name: username , password: password)    # we create the given user
@@ -63,7 +61,7 @@ class CLI < TTY::Prompt
      if @user
 
       # select is a method of prompt here
-      select('Menu - I want to') do |menu|     # syntax for select of prompt (checkout docs), dispatches chosen actions
+      select('Menu - I want to'.colorize(:green)) do |menu|     # syntax for select of prompt (checkout docs), dispatches chosen actions
 
          menu.choice 'list all recipes', -> { list_all_recipes }   # first parameter is the option to chose and second is method to call
 
@@ -102,10 +100,23 @@ class CLI < TTY::Prompt
 
    def view_recipe(recipe)   # method to view a recipe
       if recipe              # only view valid recipes
-         say(recipe.title)
-         say(recipe.description)
-         say('Calories: ' + recipe.calorie.to_s)
-         say('Time: ' + recipe.time.to_s)
+
+         rows =[]
+         rows << ['Title'.colorize(:yellow), recipe.title]
+         rows << :separator
+         rows << ['Description'.colorize(:yellow), recipe.description]
+         rows << :separator
+         rows << ['Calories'.colorize(:yellow), recipe.calorie]
+         rows << :separator
+         rows << ['Time'.colorize(:yellow), recipe.time]
+         table = Terminal::Table.new :rows => rows
+         puts table
+
+
+         # say(recipe.title)
+         # say(recipe.description)
+         # say('Calories: ' + recipe.calorie.to_s)
+         # say('Time: ' + recipe.time.to_s)
          # select actions to add to or delete from the kitchen
          select('I want to') do |menu|     # select actions for viewed recipe
             if !recipe.users.include?(@user)  # show option to add recipe if recipe not in user's kitchen
@@ -127,7 +138,7 @@ class CLI < TTY::Prompt
          view_recipe recipe # view the selected recipe
       else
          say('No recipes were found.')  # if none found, say so
-      end      
+      end   
    end
 
 
@@ -137,9 +148,9 @@ class CLI < TTY::Prompt
 
    def find_recipes_by_ingredients
 
-   say('As a user, I want to enter an list of ingredients (select from list on cli) and be given a list of all recipes that can be prepared with the entered ingredients.') 
+   say('Which ingredients do you have?') 
    # print a list of all known ingredients and offer a multiple choice selection
-   
+
    # ingredients = multi_select("Select ingredients",Ingredient.all.map {|i| i.name})
    ingredients = multi_select("Select ingredients",Ingredient.pluck(:name))
 
@@ -148,23 +159,27 @@ class CLI < TTY::Prompt
    ingredients = Ingredient.where(name: ingredients)
    recipes = ingredients.map { |i| i.recipes }.flatten.uniq
 
+
    list_recipes recipes 
    end
 
 
    # As a user, I want to find recipes by name and retrieve a list of all ingredients needed to prepare that recipe.
    def find_recipe_by_title
-      view_recipe(Recipe.find_by(title: ask('Which recipe would you like to look for?')))     # ask for recipe title, search for it and display
+
+
+      view_recipe(Recipe.find_by(title: ask('Which recipe would you like to look for? >:')))     # ask for recipe title, search for it and display
+
    end
 
    # As a user, I want to enter a calorie limit and retrieve a list of all recipes that match the given calorie limit.
    def find_recipes_by_calories
-      list_recipes(Recipe.where('calorie < ?' , ask('Maximum number of calories?')))  # prompt user for max calories, query the database and list results
+      list_recipes(Recipe.where('calorie < ?' , ask('Maximum number of calories? >:')))  # prompt user for max calories, query the database and list results
    end
 
    # As a user I want to enter a time range, and able to return all the recipes within that time range
    def find_recipes_by_time
-      list_recipes(Recipe.where('time < ?' , ask('Maximum number of minutes?')))   # prompt user for max time, query the database and list results
+      list_recipes(Recipe.where('time < ?' , ask('Maximum number of minutes? >:')))   # prompt user for max time, query the database and list results
    end
 
    # As a user I will be able to delete a recipe from my Kitchen.
