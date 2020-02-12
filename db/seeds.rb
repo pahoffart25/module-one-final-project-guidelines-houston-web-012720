@@ -63,10 +63,10 @@ end
 
 
 # query the api
-response = HTTParty.get("https://api.edamam.com/search?q=chicken&app_id=18bc3679&app_key=94a62e328e3e1f0fdcdfe2b7101a9f32&from=0&to=3&calories=591-722&health=alcohol-free")
+response = HTTParty.get("https://api.edamam.com/search?q=egg&app_id=18bc3679&app_key=94a62e328e3e1f0fdcdfe2b7101a9f32&from=0&to=5&calories=591-722&health=alcohol-free")
 
 # CLASS RECIPE
-   response["hits"].each do |hit| # for each recipe in response
+    response["hits"].each do |hit| # for each recipe in response
    # create the new recipe in the database
    recipe = Recipe.create(title: hit["recipe"]["label"], calorie: hit["recipe"]["calories"], time: hit["recipe"]["totalTime"],description:hit["recipe"]["url"])
    # for each ingredient of this recipe
@@ -75,7 +75,7 @@ response = HTTParty.get("https://api.edamam.com/search?q=chicken&app_id=18bc3679
     # create a meal object in the database that links the recipe to the ingredient and set the required weight and amount (if possible)
     Meal.create(recipe_id: recipe.id , ingredient_id: ingredient.id , weight: a["weight"] , amount: extract_number(a["text"]))
    end
-   end
+    end
 
 
 
