@@ -88,34 +88,43 @@ if @user
    end
 
 
-   def add_recipe_to_kitchen(recipe)  # adds a recipe to the kitchen of the logged in user (call from view recipe)
+   def add_recipe_to_kitchen(recipe)  # adds a recipe to the kitchen of the logged in user (called from view recipe)
       kitchen = Kitchen.create()
       @user.kitchens << kitchen
       recipe.kitchens << kitchen
    end
 
-   def delete_recipe_to_kitchen(recipe)  # deletes a recipe from the kitchen of the logged in user (call from view recipe)
+   def delete_recipe_from_kitchen(recipe)  # deletes a recipe from the kitchen of the logged in user (called from view recipe)
       kitchen = Kitchen.where(user: @user , recipe: recipe)
-      kitchen.destroy
+      kitchen.first.destroy  # get the first result object and delete it from the db
    end
 
 
-   def view_recipe(recipe)   # method to view a recipe (add option for saving to kitchen here)
-      if recipe
+   def view_recipe(recipe)   # method to view a recipe
+      if recipe              # only view valid recipes
          say(recipe.title)
          say(recipe.description)
          say('Calories: ' + recipe.calorie.to_s)
          say('Time: ' + recipe.time.to_s)
-         # here add a select and choice to add or delete to the kitchen
+         # select actions to add to or delete from the kitchen
+         select('I want to') do |menu|     # select actions for viewed recipe
+            if !recipe.users.include?(@user)  # show option to add recipe if recipe not in user's kitchen
+               menu.choice 'add this recipe to my kitchen', -> { add_recipe_to_kitchen(recipe) }  
+            else # if recipe is already in user's kitchen, offer option to delete
+               menu.choice 'delete this recipe from my kitchen', -> { delete_recipe_from_kitchen(recipe) } 
+            end # do nothing and return without modifying the kitchen
+            menu.choice 'go back to menu', -> { nil }   # do no actiion and return
+         end
+            
       else
          say('No such recipe.')  # if not a valid recipe, say so
       end
    end
 
-   def list_recipes recipes  # same as above for lists of result recipes
-      if recipes.count > 0
+   def list_recipes recipes  # prints a result list of ingredients to the user
+      if recipes.count > 0   # only print if there are recipes in list
          recipe = select('Found:', recipes.map { |r| {name: r.title , value: r} })  # select recipes based on title and show them
-         view_recipe recipe
+         view_recipe recipe # view the selected recipe
       else
          say('No recipes were found.')  # if none found, say so
       end      
@@ -129,11 +138,12 @@ if @user
    def find_recipes_by_ingredients
 
    say('As a user, I want to enter an list of ingredients (select from list on cli) and be given a list of all recipes that can be prepared with the entered ingredients.') 
-   # we have no ingedients in the database yet, so either add column or change this method
-   ingredients = multi_select("Select ingredients",Ingredient.all)
-   #  We would need to select from all recipes, where these recipe's ingredients are contained in the chosen ingredients.
+   # print a list of all known ingredients and offer a multiple choice selection
+   ingredients = multi_select("Select ingredients",Ingredient.all.map {|i| i.name })
+   #  TODO We would need to select from all recipes, where these recipe's ingredients are contained in the chosen ingredients.
       
-   # recipes = ingredients.reci
+   recipes = Recipe.where(ingredients: ingredients)
+   list_recipes recipes
 
    end
 
@@ -143,20 +153,19 @@ if @user
       view_recipe(Recipe.find_by(title: ask('Which recipe woukld you like to look for?')))     # ask for recipe title, search for it and display
    end
 
-
    # As a user, I want to enter a calorie limit and retrieve a list of all recipes that match the given calorie limit.
    def find_recipes_by_calories
-      list_recipes(Recipe.where('calorie < ?' , ask('Maximum number of calories?')))  # ask calories and search, then list as above
+      list_recipes(Recipe.where('calorie < ?' , ask('Maximum number of calories?')))  # prompt user for max calories, query the database and list results
    end
 
    # As a user I want to enter a time range, and able to return all the recipes within that time range
    def find_recipes_by_time
-      list_recipes(Recipe.where('time < ?' , ask('Maximum number of minutes?')))   # same as calories but with time
+      list_recipes(Recipe.where('time < ?' , ask('Maximum number of minutes?')))   # prompt user for max time, query the database and list results
    end
 
    # As a user I will be able to delete a recipe from my Kitchen.
    def show_recipes_in_my_kitchen
-      list_recipes(@user.recipes)        # here we just list all the users recipes from kitchen (association incorrect: user has many kitchens!)
+      list_recipes(@user.recipes) # just list all recipes associated to the users kitchen
    end
 
 end

@@ -4,6 +4,7 @@ class CreateMeals < ActiveRecord::Migration[5.2]
       t.integer :recipe_id
       t.integer :ingredient_id
       t.integer :amount
+      t.float :weight
     end
   end
 end
