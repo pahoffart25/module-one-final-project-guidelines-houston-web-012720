@@ -24,12 +24,14 @@ require 'httparty'
 # user6 = User.create(user_name: "Stephen", password: "")
 
 
-# Kitchen.create(user_id: user1.id , recipe_id: r1.id )
-# Kitchen.create(user_id: user1.id , recipe_id: r2.id )
-# Kitchen.create(user_id: user3.id , recipe_id: r3.id )
-# Kitchen.create(user_id: user2.id , recipe_id: r4.id )
-# Kitchen.create(user_id: user1.id , recipe_id: r2.id )
-# Kitchen.create(user_id: user3.id , recipe_id: r3.id )
+# kitcheck1 = Kitchen.create(user_id: user1.id , recipe_id: r1.id )
+# kitcheck2 = Kitchen.create(user_id: user1.id , recipe_id: r2.id )
+# kitcheck3 = Kitchen.create(user_id: user3.id , recipe_id: r3.id )
+# kitcheck4 = Kitchen.create(user_id: user2.id , recipe_id: r4.id )
+# kitcheck5 = Kitchen.create(user_id: user1.id , recipe_id: r2.id )
+# kitcheck6 = Kitchen.create(user_id: user3.id , recipe_id: r3.id )
+
+# user1.recipe << 
 
 
 
