@@ -10,39 +10,40 @@ class CLI < TTY::Prompt
    def greet
 
       a = Artii::Base.new
-      welcome =  a.asciify ('Welcome to the kitchen!')
+      welcome =  a.asciify ('Welcome to The Kitchen!')
       puts welcome.colorize(:cyan)
       # method of prompt
 
    end
 
-
-   def ask_password
-      mask('What is your password?') # method of prompt that gives us password input
-   end
    
 
 
    #1) I want to enter name and password , and my data be saved , have option of login or new_user
    def login_or_register
-      username = ask('What is your name?', default: ENV['USER'])
+      username = ask('What is your user name?')
       puts ""
       password = mask('What is your password?')
       puts ""
-
+  
       user = User.find_by(user_name: username) # get user from db
       if user
+         if user.user_name == username && user.password != password
+            say("User name already exist")
+            puts ""
+         end
          if user.password == password     #check if password valid and set user logged in
             say('You are now logged in.')
             @user = user
             sleep(1)
          else
-            say('Access denied! Wrong password.') 
+            say('Access denied! Wrong password') 
          end
       elsif yes?('You are not yet registered. Do you want to register?')  # method of prompt for yes/no
          @user = User.create(user_name: username , password: password)    # we create the given user
       end
    end
+    
 
    def logout
       @user = nil  # set user logged in to nil
@@ -102,22 +103,15 @@ class CLI < TTY::Prompt
       if recipe              # only view valid recipes
 
          rows =[]
-         rows << ['Title'.colorize(:yellow), recipe.title]
+         rows << ['Title:'.colorize(:yellow), recipe.title]
          rows << :separator
-         rows << ['Description'.colorize(:yellow), recipe.description]
+         rows << ['Description:'.colorize(:yellow), recipe.description]
          rows << :separator
-         rows << ['Calories'.colorize(:yellow), recipe.calorie]
+         rows << ['Calories:'.colorize(:yellow), recipe.calorie]
          rows << :separator
-         rows << ['Time'.colorize(:yellow), recipe.time]
+         rows << ['Time:'.colorize(:yellow), recipe.time]
          table = Terminal::Table.new :rows => rows
          puts table
-
-
-         # say(recipe.title)
-         # say(recipe.description)
-         # say('Calories: ' + recipe.calorie.to_s)
-         # say('Time: ' + recipe.time.to_s)
-         # select actions to add to or delete from the kitchen
          select('I want to') do |menu|     # select actions for viewed recipe
             if !recipe.users.include?(@user)  # show option to add recipe if recipe not in user's kitchen
                menu.choice 'add this recipe to my kitchen', -> { add_recipe_to_kitchen(recipe) }  
@@ -150,14 +144,10 @@ class CLI < TTY::Prompt
 
    say('Which ingredients do you have?') 
    # print a list of all known ingredients and offer a multiple choice selection
-
-   # ingredients = multi_select("Select ingredients",Ingredient.all.map {|i| i.name})
-   ingredients = multi_select("Select ingredients",Ingredient.pluck(:name))
-
-   #  TODO We would need to select from all recipes, where these recipe's ingredients are contained in the chosen ingredients.
-      
-   ingredients = Ingredient.where(name: ingredients)
-   recipes = ingredients.map { |i| i.recipes }.flatten.uniq
+   ingredients = multi_select("Select ingredients",Ingredient.pluck(:name)) 
+   
+   ingredients = Ingredient.where(name: ingredients) 
+   recipes = ingredients.map { |i| i.recipes }.flatten.uniq 
 
 
    list_recipes recipes 
