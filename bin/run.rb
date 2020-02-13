@@ -158,13 +158,14 @@ class CLI < TTY::Prompt
    def find_recipe_by_title
 
 
-      view_recipe(Recipe.find_by(title: ask('Which recipe would you like to look for? >:')))     # ask for recipe title, search for it and display
+      #  view_recipe(Recipe.find_by(title: ask('Which recipe would you like to look for? >:')))     # ask for recipe title, search for it and display
+       list_recipes(Recipe.where("title LIKE ?", "%"+ ask('Which recipe would you like to look for? >:') + "%"))
 
    end
 
    # As a user, I want to enter a calorie limit and retrieve a list of all recipes that match the given calorie limit.
    def find_recipes_by_calories
-      list_recipes(Recipe.where('calorie < ?' , ask('Maximum number of calories? >:')))  # prompt user for max calories, query the database and list results
+      list_recipes(Recipe.where('calorie < ?' , ask('Maximum number of calories? >:')) )  # prompt user for max calories, query the database and list results
    end
 
    # As a user I want to enter a time range, and able to return all the recipes within that time range
