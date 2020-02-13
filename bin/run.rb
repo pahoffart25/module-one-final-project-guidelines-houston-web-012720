@@ -18,32 +18,46 @@ class CLI < TTY::Prompt
 
    
 
-
-   #1) I want to enter name and password , and my data be saved , have option of login or new_user
-   def login_or_register
-      username = ask('What is your user name?')
-      puts ""
-      password = mask('What is your password?')
-      puts ""
-  
-      user = User.find_by(user_name: username) # get user from db
-      if user
-         if user.user_name == username && user.password != password
-            say("User name already exist")
-            puts ""
-         end
-         if user.password == password     #check if password valid and set user logged in
-            say('You are now logged in.')
-            @user = user
-            sleep(1)
-         else
-            say('Access denied! Wrong password') 
-         end
-      elsif yes?('You are not yet registered. Do you want to register?')  # method of prompt for yes/no
-         @user = User.create(user_name: username , password: password)    # we create the given user
+   def create_user
+      user_name = ask ("What would you like your user name to be?")
+      if User.exists?(user_name: user_name) 
+         say("This user already exist")
+      else
+      password = mask("What would you like your password to be?") 
+      @user = User.create(user_name: user_name, password: password)
       end
-   end
-    
+  end
+
+
+    def check_info
+      user_name = ask("Enter your user name")
+      @user = User.find_by(user_name: user_name)
+         if @user 
+            puts
+            password = mask("Enter password")
+            if @user.password == password  
+               puts   
+               say('You are now logged in.')
+            else 
+               puts
+               say("That is not the correct password")
+               puts
+               greeting
+            end
+         end
+    end
+
+    def greeting
+      selection = ask("Welcome, are you a current user? Yes/No")
+        if selection == "Yes"
+            puts
+            check_info
+        else 
+            puts
+            create_user
+        end
+    end
+
 
    def logout
       @user = nil  # set user logged in to nil
@@ -56,7 +70,8 @@ class CLI < TTY::Prompt
       while true   # forever repeat
 
       if !@user
-         login_or_register  # login if not done yet
+         greeting
+         #login_or_register  # login if not done yet
       end
 
      if @user
