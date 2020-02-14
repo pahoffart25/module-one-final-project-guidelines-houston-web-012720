@@ -1,5 +1,6 @@
 require_relative '../config/environment'
 
+
 # Here we inherit from Prompt, to get all CLI methods (not strictly necessary though)
 class CLI < TTY::Prompt
 
@@ -18,42 +19,49 @@ class CLI < TTY::Prompt
 
    
 
-   def create_user
+   def create_user #creates a new user in our database
       user_name = ask ("What would you like your user name to be?")
       if User.exists?(user_name: user_name) 
          say("This user already exist")
       else
-      password = mask("What would you like your password to be?") 
-      @user = User.create(user_name: user_name, password: password)
+         puts
+         password = mask("What would you like your password to be?") 
+         @user = User.create(user_name: user_name, password: password)
       end
   end
 
 
-    def check_info
+    def check_info  #checking to see if you are a current user and if your password is correct.
       user_name = ask("Enter your user name")
-      @user = User.find_by(user_name: user_name)
-         if @user 
+       @user = User.find_by(user_name: user_name)
+      
+         if @user
             puts
             password = mask("Enter password")
             if @user.password == password  
-               puts   
+               puts
                say('You are now logged in.')
-            else 
-               puts
+            else  
+               
                say("That is not the correct password")
-               puts
+
+               
                greeting
             end
+         else
+            say("No user by that name")
+            greeting
          end
     end
 
-    def greeting
+    def greeting #Setups up new account or gets you to log in screen
       selection = ask("Welcome, are you a current user? Yes/No")
-        if selection == "Yes"
-            puts
+      puts
+        if selection == "yes"
+            
             check_info
         else 
-            puts
+            
             create_user
         end
     end
@@ -152,7 +160,7 @@ class CLI < TTY::Prompt
 
 
    def list_all_recipes              # list all of them from the db
-     list_recipes Recipe.all
+     list_recipes Recipe.all.order(:title) 
    end
 
    def find_recipes_by_ingredients
@@ -165,7 +173,7 @@ class CLI < TTY::Prompt
    recipes = ingredients.map { |i| i.recipes }.flatten.uniq 
 
 
-   list_recipes recipes 
+   list_recipes recipes
    end
 
 
@@ -174,23 +182,23 @@ class CLI < TTY::Prompt
 
 
       #  view_recipe(Recipe.find_by(title: ask('Which recipe would you like to look for? >:')))     # ask for recipe title, search for it and display
-       list_recipes(Recipe.where("title LIKE ?", "%"+ ask('Which recipe would you like to look for? >:') + "%"))
+       list_recipes(Recipe.where("title LIKE ?", "%"+ ask('Which recipe would you like to look for? >:') + "%").order(:title))
 
    end
 
    # As a user, I want to enter a calorie limit and retrieve a list of all recipes that match the given calorie limit.
    def find_recipes_by_calories
-      list_recipes(Recipe.where('calorie < ?' , ask('Maximum number of calories? >:')) )  # prompt user for max calories, query the database and list results
+      list_recipes(Recipe.where('calorie < ?' , ask('Maximum number of calories? >:')).order(:title)) # prompt user for max calories, query the database and list results 
    end
 
    # As a user I want to enter a time range, and able to return all the recipes within that time range
    def find_recipes_by_time
-      list_recipes(Recipe.where('time < ?' , ask('Maximum number of minutes? >:')))   # prompt user for max time, query the database and list results
+      list_recipes(Recipe.where('time < ?' , ask('Maximum number of minutes? >:')).order(:title))   # prompt user for max time, query the database and list results
    end
 
    # As a user I will be able to delete a recipe from my Kitchen.
    def show_recipes_in_my_kitchen
-      list_recipes(@user.recipes) # just list all recipes associated to the users kitchen
+      list_recipes(@user.recipes.order(:title) )  # just list all recipes associated to the users kitchen
    end
 
 end
