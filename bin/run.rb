@@ -20,11 +20,13 @@ class CLI < TTY::Prompt
    
 
    def create_user #creates a new user in our database
+      greet
       user_name = ask ("What would you like your user name to be?")
       if User.exists?(user_name: user_name) 
          say("This user already exist")
       else
-         puts
+         system "clear"
+         greet
          password = mask("What would you like your password to be?") 
          @user = User.create(user_name: user_name, password: password)
       end
@@ -32,14 +34,18 @@ class CLI < TTY::Prompt
 
 
     def check_info  #checking to see if you are a current user and if your password is correct.
+      
+      greet
       user_name = ask("Enter your user name")
+      system "clear"
        @user = User.find_by(user_name: user_name)
       
          if @user
-            puts
+            greet
             password = mask("Enter password")
+            system "clear"
             if @user.password == password  
-               puts
+               greet
                say('You are now logged in.')
             else  
                
@@ -55,7 +61,10 @@ class CLI < TTY::Prompt
     end
 
     def greeting #Setups up new account or gets you to log in screen
+      system "clear"
+      greet
       selection = ask("Welcome, are you a current user? Yes/No")
+      system "clear"
       puts
         if selection == "yes"
             
@@ -73,7 +82,7 @@ class CLI < TTY::Prompt
 
    def menu
 
-      greet     # first greet
+      # greet     # first greet
 
       while true   # forever repeat
 
@@ -165,24 +174,22 @@ class CLI < TTY::Prompt
 
    def find_recipes_by_ingredients
 
-   say('Which ingredients do you have?') 
-   # print a list of all known ingredients and offer a multiple choice selection
-   ingredients = multi_select("Select ingredients",Ingredient.pluck(:name)) 
+      say('Which ingredients do you have?') 
+      # print a list of all known ingredients and offer a multiple choice selection
+      ingredients = multi_select("Select ingredients",Ingredient.pluck(:name)) 
    
-   ingredients = Ingredient.where(name: ingredients) 
-   recipes = ingredients.map { |i| i.recipes }.flatten.uniq 
+      ingredients = Ingredient.where(name: ingredients) 
+      recipes = ingredients.map { |i| i.recipes }.flatten.uniq 
 
 
-   list_recipes recipes
+      list_recipes recipes
    end
 
 
    # As a user, I want to find recipes by name and retrieve a list of all ingredients needed to prepare that recipe.
    def find_recipe_by_title
-
-
       #  view_recipe(Recipe.find_by(title: ask('Which recipe would you like to look for? >:')))     # ask for recipe title, search for it and display
-       list_recipes(Recipe.where("title LIKE ?", "%"+ ask('Which recipe would you like to look for? >:') + "%").order(:title))
+   list_recipes(Recipe.where("title LIKE ?", "%"+ ask('Which recipe would you like to look for? >:') + "%").order(:title))
 
    end
 
