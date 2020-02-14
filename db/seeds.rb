@@ -2,7 +2,7 @@ require 'pry'
 require 'httparty'
 
 # Recipe.destroy_all
-# User.destroy_all
+#User.destroy_all
 # Kitchen.destroy_all
 # Meal.destroy_all
 # Ingredient.destroy_all
@@ -44,6 +44,11 @@ require 'httparty'
 # meal3 = Meal.create(recipe_id: r1.id , ingredient_id: ingredient3.id , amount: 1)
 
 
+
+
+
+
+
 # extract just a unique name from the ingredient text
 def extract_name(text)
     text.tr("0-9", "") # remove all digits from string
@@ -78,6 +83,11 @@ response = HTTParty.get("https://api.edamam.com/search?q=egg&app_id=18bc3679&app
     Meal.create(recipe_id: recipe.id , ingredient_id: ingredient.id , weight: a["weight"] , amount: extract_number(a["text"]))
    end
     end
+
+
+
+
+
 
 
 
