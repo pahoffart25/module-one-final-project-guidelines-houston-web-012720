@@ -20,13 +20,12 @@ class CLI < TTY::Prompt
    
 
    def create_user #creates a new user in our database
-      greet
+      puts
       user_name = ask ("What would you like your user name to be?")
       if User.exists?(user_name: user_name) 
          say("This user already exist")
       else
-         system "clear"
-         greet
+         puts
          password = mask("What would you like your password to be?") 
          @user = User.create(user_name: user_name, password: password)
       end
@@ -35,23 +34,18 @@ class CLI < TTY::Prompt
 
     def check_info  #checking to see if you are a current user and if your password is correct.
       
-      greet
-      user_name = ask("Enter your user name")
-      system "clear"
-       @user = User.find_by(user_name: user_name)
       
+      user_name = ask("Enter your user name")
+       @user = User.find_by(user_name: user_name)
          if @user
-            greet
+            puts
             password = mask("Enter password")
-            system "clear"
             if @user.password == password  
-               greet
                say('You are now logged in.')
             else  
-               
+               puts
                say("That is not the correct password")
-
-               
+               puts
                greeting
             end
          else
@@ -61,10 +55,7 @@ class CLI < TTY::Prompt
     end
 
     def greeting #Setups up new account or gets you to log in screen
-      system "clear"
-      greet
       selection = ask("Welcome, are you a current user? Yes/No")
-      system "clear"
       puts
         if selection == "yes"
             
@@ -82,7 +73,7 @@ class CLI < TTY::Prompt
 
    def menu
 
-      # greet     # first greet
+      greet     # first greet
 
       while true   # forever repeat
 
